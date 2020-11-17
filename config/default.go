@@ -6,8 +6,8 @@ import (
 
 const (
 	defaultRateMs = 1000
-	defaultScale  = 1
-	defaultTheme  = console.ThemeDark
+	defaultScale	= 1
+	defaultTheme	= console.ThemeDark
 )
 
 func (c *Config) setDefaults() {
@@ -208,6 +208,14 @@ func (c *Config) setDefaultItemSettings() {
 		s.Gradient = &palette.GradientColors[i%(len(palette.GradientColors))]
 		if s.Item.Pty == nil {
 			s.Item.Pty = &defaultPty
+		}
+		if s.Min == nil {
+			mi := -1
+			s.Min = &mi
+		}
+		if s.Max == nil {
+			ma := 0
+			s.Max = &ma
 		}
 		c.SparkLines[i] = s
 	}

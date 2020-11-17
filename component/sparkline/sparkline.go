@@ -20,6 +20,8 @@ type SparkLine struct {
 	minValue float64
 	scale    int
 	gradient []ui.Color
+	max      int
+	min      int
 	palette  console.Palette
 	mutex    *sync.Mutex
 }
@@ -32,6 +34,9 @@ func NewSparkLine(c config.SparkLineConfig, palette console.Palette) *SparkLine 
 		values:   []float64{},
 		scale:    *c.Scale,
 		gradient: *c.Gradient,
+		max:      *c.Max,
+		min:      *c.Min,
+		minValue: float64(^uint(0) >> 1),
 		palette:  palette,
 		mutex:    &sync.Mutex{},
 	}
@@ -75,8 +80,17 @@ func (s *SparkLine) consumeSample(sample *data.Sample) {
 		}
 	}
 
-	s.maxValue = max
-	s.minValue = min
+	if s.max != 0 {
+		s.maxValue = float64(s.max)
+	} else if max > s.maxValue {
+		s.maxValue = max
+	}
+	if s.min > -1 {
+		s.minValue = float64(s.min)
+	} else if min < s.minValue {
+		s.minValue = min
+	}
+
 
 	if len(s.values)%100 == 0 {
 		s.mutex.Lock()

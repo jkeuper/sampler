@@ -72,6 +72,8 @@ type SparkLineConfig struct {
 	Scale           *int        `yaml:"scale,omitempty"`
 	Item            Item        `yaml:",inline"`
 	Gradient        *[]ui.Color `yaml:",omitempty"`
+	Max             *int        `yaml:"max"`
+	Min             *int        `yaml:"min"`
 }
 
 type BarChartConfig struct {
