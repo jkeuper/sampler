@@ -77,7 +77,7 @@ func main() {
 	}
 
 	palette := console.GetPalette(*cfg.Theme)
-	lout := layout.NewLayout(component.NewStatusBar(*opt.ConfigFile, palette), component.NewMenu(palette))
+	lout := layout.NewLayout(component.NewStatusBar(*opt.ConfigFile, palette, cfg.Variables["showStatusline"] != "false"), component.NewMenu(palette))
 
 	starter := &Starter{player, lout, palette, opt, *cfg}
 	samplers := starter.startAll()

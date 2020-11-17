@@ -270,9 +270,12 @@ textboxes:
 If the configuration file contains repeated patterns, they can be extracted into the `variables` section.
 Also variables can be specified using `-v`/`--variable` flag on startup, and any system environment variables will also be available in the scripts.
 
+A special variable `showStatusline` to hide the statusline when running. Usefull for small dashboards.
+
 ```yml
 variables:
     mongoconnection: mongo --quiet --host=localhost test
+    showStatusline: false
 barcharts:
   - title: MongoDB documents by status
     items:

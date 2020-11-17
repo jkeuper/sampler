@@ -16,31 +16,31 @@ import (
 // Layout represents component arrangement on the screen
 type Layout struct {
 	ui.Block
-	Components       []*component.Component
-	statusbar        *component.StatusBar
-	menu             *component.Menu
+	Components			 []*component.Component
+	statusbar				 *component.StatusBar
+	menu						 *component.Menu
 	ChangeModeEvents chan Mode
-	mode             Mode
-	selection        int
+	mode						 Mode
+	selection				 int
 	positionsChanged bool
-	startupTime      time.Time
+	startupTime			 time.Time
 }
 
 type Mode rune
 
 const (
-	ModeDefault          Mode = 0
-	ModeIntro            Mode = 1
-	ModePause            Mode = 2
+	ModeDefault					 Mode = 0
+	ModeIntro						 Mode = 1
+	ModePause						 Mode = 2
 	ModeComponentSelect  Mode = 3
 	ModeMenuOptionSelect Mode = 4
-	ModeComponentMove    Mode = 5
+	ModeComponentMove		 Mode = 5
 	ModeComponentResize  Mode = 6
-	ModeChartPinpoint    Mode = 7
+	ModeChartPinpoint		 Mode = 7
 )
 
 const (
-	minDimension    = 3
+	minDimension		= 3
 	statusbarHeight = 1
 )
 
@@ -52,14 +52,22 @@ func NewLayout(statusline *component.StatusBar, menu *component.Menu) *Layout {
 	statusline.SetRect(0, height-statusbarHeight, width, height)
 
 	return &Layout{
-		Block:            block,
-		Components:       make([]*component.Component, 0),
-		statusbar:        statusline,
-		menu:             menu,
-		mode:             ModeDefault,
-		selection:        0,
+		Block:						block,
+		Components:				make([]*component.Component, 0),
+		statusbar:				statusline,
+		menu:							menu,
+		mode:							ModeDefault,
+		selection:				0,
 		ChangeModeEvents: make(chan Mode, 10),
-		startupTime:      time.Now(),
+		startupTime:			time.Now(),
+	}
+}
+
+func (l *Layout) GetStatusbarHeight() int {
+	if l.statusbar.IsVisible() {
+		return statusbarHeight
+	} else {
+		return 0
 	}
 }
 
@@ -298,7 +306,7 @@ func (l *Layout) moveSelection(direction string) {
 func (l *Layout) Draw(buffer *ui.Buffer) {
 
 	columnWidth := float64(l.GetRect().Dx()) / float64(console.ColumnsCount)
-	rowHeight := float64(l.GetRect().Dy()-statusbarHeight) / float64(console.RowsCount)
+	rowHeight := float64(l.GetRect().Dy()-l.GetStatusbarHeight()) / float64(console.RowsCount)
 
 	for _, c := range l.Components {
 		rectangle := calculateComponentCoordinates(c, columnWidth, rowHeight)
@@ -310,7 +318,7 @@ func (l *Layout) Draw(buffer *ui.Buffer) {
 	}
 
 	l.statusbar.SetRect(
-		0, l.GetRect().Dy()-statusbarHeight,
+		0, l.GetRect().Dy()-l.GetStatusbarHeight(),
 		l.GetRect().Dx(), l.GetRect().Dy())
 
 	l.statusbar.Draw(buffer)
@@ -320,7 +328,7 @@ func (l *Layout) Draw(buffer *ui.Buffer) {
 func (l *Layout) findComponentAtPoint(point image.Point) (*component.Component, int) {
 
 	columnWidth := float64(l.GetRect().Dx()) / float64(console.ColumnsCount)
-	rowHeight := float64(l.GetRect().Dy()-statusbarHeight) / float64(console.RowsCount)
+	rowHeight := float64(l.GetRect().Dy()-l.GetStatusbarHeight()) / float64(console.RowsCount)
 
 	for i, c := range l.Components {
 

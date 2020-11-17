@@ -8,18 +8,19 @@ import (
 )
 
 const (
-	pauseText      = "  P A U S E D  "
+	pauseText			 = "	P A U S E D  "
 	bindingsIndent = 3
 )
 
 type StatusBar struct {
 	*ui.Block
 	keyBindings []string
-	text        string
-	pause       bool
+	text				string
+	pause				bool
+	isVisible		bool
 }
 
-func NewStatusBar(configFileName string, palette console.Palette) *StatusBar {
+func NewStatusBar(configFileName string, palette console.Palette, visible bool) *StatusBar {
 
 	block := *ui.NewBlock()
 	block.Border = false
@@ -34,11 +35,12 @@ func NewStatusBar(configFileName string, palette console.Palette) *StatusBar {
 			"(<->) selection",
 			"(ESC) reset alerts",
 		},
+		isVisible: visible,
 	}
 }
 
 func (s *StatusBar) Draw(buffer *ui.Buffer) {
-
+	if s.IsVisible() {
 	buffer.Fill(ui.NewCell(' ', ui.NewStyle(console.ColorClear, console.GetMenuColorReverse())), s.GetRect())
 
 	indent := bindingsIndent
@@ -54,6 +56,11 @@ func (s *StatusBar) Draw(buffer *ui.Buffer) {
 	}
 
 	s.Block.Draw(buffer)
+}
+}
+
+func (s *StatusBar) IsVisible() bool {
+	return s.isVisible
 }
 
 func (s *StatusBar) TogglePause() {
